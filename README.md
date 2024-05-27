@@ -18,7 +18,7 @@ The pipeline works in conda enviroments, so you will have to install anaconda or
 You can do this by running:
 
 ```bash
-wget "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86.sh"
+wget "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
 bash Miniconda3-latest-Linux-x86_64.sh
 rm Miniconda3-latest-Linux-x86_64.sh
 ```
@@ -34,6 +34,10 @@ conda activate steap
 ```
 
 This will create  the necessary conda environments and clones the CELLECT repo and merges it with STEAP.
+
+### **Step 3: Unzip the genotype data from the 1000 Genomes**
+Move to the folder STEAP/data/magma/g1000_eur/, and unzip the g1000_eur.zip file there. Afterwards, you should find 5 addtional files (g1000_eur.bed, g1000_eur.bim, g1000_eur.fam, g1000_eur.synonyms, README) in the folder.
+
 
 ## Getting Started
 
@@ -104,7 +108,12 @@ qsub SGE_cluster_magma.sh
 
 ### **Running the post-processing notebook**
 
-To use the post-processing scripts just use the [notebook](https://github.com/erwinerdem/STEAP/blob/master/notebooks/depression_example.ipynb) after running the pipeline.
+To use the post-processing scripts just use the [notebook](https://github.com/erwinerdem/STEAP/blob/master/notebooks/depression_example.ipynb) after running the pipeline. Please make sure your jupyter notebook is installed under the conda steap environment, i.e.:
+
+```bash
+conda activate steap
+conda install jupyter
+```
 
 Another option is to use the [STEAP post-processing appyter](https://appyters.maayanlab.cloud/#/STEAP_post_processing_analysis), where you can upload your `prioritization.csv` files which you get as output of the enrichment analysis.
 
