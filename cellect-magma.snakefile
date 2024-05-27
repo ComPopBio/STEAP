@@ -19,8 +19,6 @@ BASE_OUTPUT_DIR = os.path.join(config['BASE_OUTPUT_DIR'], "CELLECT-MAGMA")
 # More overlapping functionality
 include: "rules/common_func2.smk"
 
-
-
 # Detect OS type and load the corresponding MAGMA binary file
 usersystem = platform.system()
 magma_version_dir = "magma/bin"
