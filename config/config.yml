@@ -14,7 +14,7 @@
 
 # Folder where all the outputs are saved (LD scores, prioritization results files, etc.) 
 # CELLECT-LDSC and CELLECT-MAGMA will write the analysis results into <BASE_OUTPUT_DIR>/CELLECT-LDSC and <BASE_OUTPUT_DIR>/CELLECT-MAGMA subdirectories respectively. The directory and its subdirectories will be created if they do not exist.
-BASE_OUTPUT_DIR: out/CELLECT-PGC_UKB_depression
+BASE_OUTPUT_DIR: out/PSMD
 # keep the 'out/CELLECT-' when renaming the output dir
 
 
@@ -49,9 +49,16 @@ SPECIFICITY_INPUT:
 # id: identifier for GWAS. MUST be unique and NO double underscores allowed
 # path: filepath for munged GWAS sumstats. Uncompressed / gz or bz2 compressed files allowed.
 GWAS_SUMSTATS:
-  - id: PGC_UKB_depression
-    path: gwas/PGC_UKB_depression.sumstats.gz
+  - id: PSMD_GWAS_AgeStratum1
+    path: gwas/PSMD_GWAS_AgeStratum1.sumstats.gz
+  - id: PSMD_GWAS_AgeStratum2
+    path: gwas/PSMD_GWAS_AgeStratum2.sumstats.gz
+  - id: PSMD_GWAS_AgeStratum3
+    path: gwas/PSMD_GWAS_AgeStratum3.sumstats.gz
+  - id: PSMD_GWAS_FullModel
+    path: gwas/PSMD_GWAS_FullModel.sumstats.gz
 
+    
 
 ### HMAGMA_ANNOT: annotation file for H-MAGMA
 HMAGMA_ANNOT:

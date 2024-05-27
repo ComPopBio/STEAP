@@ -73,6 +73,12 @@ def make_df_sliced(
     return df_sliced
 
 
+
+
+
+
+
+
 def make_df_upset(
     df: pd.DataFrame,
     gwas_group_dict: dict[str, list[str]],
@@ -92,6 +98,9 @@ def make_df_upset(
     df_sliced_upset = df_sliced_upset["group"].value_counts().reset_index()
     #     groups = list(df_sliced['group'].unique())
     groups = list(gwas_group_dict.keys())[::-1]
+    print(groups)
+    print(df_sliced_upset.head())
+    print(df_sliced_upset["index"])
     for g in groups:
         df_sliced_upset[g] = df_sliced_upset["index"].apply(lambda x: g in x)
 
@@ -102,6 +111,46 @@ def make_df_upset(
         df_sliced_upset = df_sliced_upset.reindex(columns=new_column)
 
     df_sliced_upset.set_index(groups, inplace=True)
+    return df_sliced_upset
+
+
+def make_df_upset_lau(
+    df: pd.DataFrame,
+    gwas_group_dict: dict[str, list[str]],
+    sign_threshold: int,
+    sort_categories_by: Union[str, None],
+) -> pd.DataFrame:
+    """
+    Creates a dataframe which is used as input for the upsetplot.
+    """
+    df_sliced = make_df_sliced(df, gwas_group_dict, sign_threshold)
+    df_sliced_upset = (
+        df_sliced.groupby(["specificity_id", "annotation"])["group"]
+        .agg(list)
+        .reset_index()
+    )
+    #print('before set',df_sliced_upset.head())
+    df_sliced_upset["group"] = df_sliced_upset["group"].apply(set)
+    #print('after set',df_sliced_upset.head())
+    df_sliced_upset = df_sliced_upset["group"].value_counts().reset_index()
+    df_after_set = df_sliced_upset
+    print('after reset',df_sliced_upset.head())
+    #     groups = list(df_sliced['group'].unique())
+    groups = list(gwas_group_dict.keys())[::-1]
+    print(groups)
+    #print(df_sliced_upset.head())
+    #print(df_sliced_upset["index"])
+    for g in groups:
+        df_sliced_upset[g] = df_sliced_upset["group"].apply(lambda x: g in x)
+        #print(df_sliced_upset[g])
+    #df_sliced_upset.drop(columns="group", inplace=True)
+    if sort_categories_by is None:
+        new_column = groups.copy()
+        new_column.append("group")
+        df_sliced_upset = df_sliced_upset.reindex(columns=new_column)
+
+    df_sliced_upset.set_index(groups, inplace=True)
+    df_sliced_upset['group']=df_after_set['count']
     return df_sliced_upset
 
 
@@ -216,8 +265,10 @@ def plot_upset(
         df, gwas_group_dict_copy, sign_threshold, sort_categories_by
     )
     plt.style.use("default")
+    print(df_sliced_upset['group'])
+    print(df_sliced_upset['group'].shape)
     upsetplot.plot(
-        df_sliced_upset["group"],
+        df_sliced_upset['group'],
         show_percentages=show_percentages,
         sort_by=sort_by,
         with_lines=with_lines,
@@ -229,7 +280,6 @@ def plot_upset(
         plt.savefig(filename, dpi=200, bbox_inches="tight")
 
     plt.show()
-
 
 if __name__ == "__main__":
     df_all = pd.read_hdf("data/data.h5", "df_all")

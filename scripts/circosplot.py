@@ -253,7 +253,7 @@ def plot(
         group_name: cm.get_cmap(color_map)(i)
         for i, group_name in enumerate(gwas_group_dict.keys())
     }
-
+   
     # make nodes
     gcircle = Gcircle()
     for node in nodes:
@@ -283,6 +283,6 @@ def plot(
         annotation_layer(gcircle, gwas_links, nodes, color_bar, bottom, axis_color="k")
     # add legend
     patches = [mpatches.Patch(color=v, label=k) for k, v in cmap_group.items()]
-    gcircle.ax.legend(handles=patches, bbox_to_anchor=(1.2, 1), loc=1, frameon=False)
+    gcircle.ax.legend(handles=patches, bbox_to_anchor=(1.4, 1), loc=1, frameon=False)
     if save:
         plt.savefig(filename, dpi=150, bbox_inches="tight")
