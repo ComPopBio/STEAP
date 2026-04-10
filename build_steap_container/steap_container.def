@@ -1,0 +1,64 @@
+Bootstrap: library
+From: ubuntu:20.04
+
+%post
+    # Update and install dependencies
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update && apt-get install -y \
+        wget \
+        git \
+        git-lfs \
+        build-essential \
+        libssl-dev \
+        libffi-dev \
+        python3 \
+        python3-pip \
+        python3-dev \
+        openjdk-11-jdk \
+        rsync
+
+    # Initialize git-lfs after installation
+    git-lfs install
+    
+
+    # Install Miniconda
+    echo "Installing Miniconda to custom location: $INSTALL_PATH"
+    wget "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+    bash Miniconda3-latest-Linux-x86_64.sh -b -p /opt/miniconda
+    rm Miniconda3-latest-Linux-x86_64.sh
+    export PATH=/opt/miniconda/bin:$PATH
+    conda init
+
+    # Clone STEAP repository and install dependencies
+    git clone https://github.com/erwinerdem/STEAP.git /STEAP
+    bash STEAP/install.sh
+    mkdir /STEAP/out
+    mkdir /STEAP/gwas
+
+%environment
+    # Set environment variables
+    export PATH=/opt/miniconda/bin:$PATH
+    source /opt/miniconda/etc/profile.d/conda.sh
+
+%runscript
+    # Default action when the container is executed
+    echo "OK"
+    echo "To use this container, activate the 'steap' conda environment and follow the STEAP pipeline steps in https://github.com/erwinerdem/STEAP.git"
+
+%test
+    echo "Container is based on $(cat /etc/os-release)"
+    echo "This is the python version in the container:"
+    python3 --version
+
+%labels
+    Author "Jing Yu"
+    Version "1.0"
+    Description "Singularity container for the STEAP pipeline, including GWAS munging, CELLEX, and other dependencies."
+
+%help
+    This container includes:
+    - Miniconda with necessary environments for the STEAP pipeline
+    - Scripts and tools for GWAS munging and enrichment analysis
+    To use:
+    1. Activate the 'steap' conda environment.
+    2. Follow the STEAP repository instructions https://github.com/erwinerdem/STEAP.git
