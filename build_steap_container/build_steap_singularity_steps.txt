@@ -1,0 +1,50 @@
+######If you want to build a container by yourself
+
+0. 
+Create the gwas input folder /gwas with the file PGC_UKB_depression.sumstats.gz
+Create the output folder /out/CELLECT-PGC_UKB_depression
+
+
+1.Build singularity container (writable sandbox) using or submitting script. 
+singularity build --fakeroot --sandbox steap_container steap_container.def
+
+
+
+2. Copy gwas, output and conda files into steep_container.
+cp -r your_output_folder steap_container/STEAP/out
+cp -r your_gwas_input_folder steap_container/STEAP/gwas
+cp -r conda steap_container/STEAP/.snakemake/conda
+
+
+
+3.Build .sif container (read-only) using or submitting script. 
+singularity build steap_container.sif steap_container  ###will build the .sif file (steap_container.sif)
+
+
+
+4.Extract files for future binding use.
+mkdir $HOME/STEAP
+singularity exec steap_container.sif cp -r /STEAP/.snakemake $HOME/STEAP/snakemake
+singularity exec steap_container.sif cp -r /STEAP/config $HOME/STEAP/config
+singularity exec steap_container.sif cp -r /STEAP/gwas $HOME/STEAP/gwas
+singularity exec steap_container.sif cp -r /STEAP/out $HOME/STEAP/out
+
+
+
+5.Test the singularity. 
+
+singularity exec \
+    steap_container.sif /bin/bash -c "
+    source /opt/miniconda/bin/activate steap
+    cd /STEAP
+    snakemake --unlock --use-conda -j -s cellect-ldsc.snakefile --configfile config/config.yml
+    snakemake --use-conda -j -s cellect-ldsc.snakefile --configfile config/config.yml
+    snakemake --use-conda -j -s cellect-magma.snakefile --configfile config/config.yml || \
+    snakemake --use-conda -j -s cellect-magma.snakefile --configfile config/config.yml
+    snakemake --use-conda -j -s cellect-h-magma.snakefile --configfile config/config.yml || \
+    snakemake --use-conda -j -s cellect-h-magma.snakefile --configfile config/config.yml"
+
+
+
+###If the run completes successfully, congratulations! You can start your own analysis by changing the config.yml file, gwas and out folder. 
+###The steap_container can be removed
