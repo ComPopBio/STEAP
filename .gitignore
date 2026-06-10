@@ -1,4 +1,5 @@
 out/
+conda/
 data/*
 !data/CELLECT_ouput/
 envs/
